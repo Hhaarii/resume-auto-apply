@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ name }} - Resume</title>
+  <style>
+    @page {
+      size: letter;
+      margin: 0.5in;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-size: 10pt;
+      line-height: 1.4;
+      color: #1a1a1a;
+      background-color: #ffffff;
+      padding: 0.25in;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 12px;
+      border-bottom: 1.5px solid #2b2b2b;
+      padding-bottom: 8px;
+    }
+    h1 {
+      font-size: 20pt;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: #0f172a;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .contact-info {
+      font-size: 9pt;
+      color: #475569;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .contact-info span:not(:last-child)::after {
+      content: "•";
+      margin-left: 12px;
+      color: #94a3b8;
+    }
+    .contact-info a {
+      color: #0284c7;
+      text-decoration: none;
+    }
+    section {
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+    h2 {
+      font-size: 11pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #0f172a;
+      border-bottom: 1px solid #cbd5e1;
+      padding-bottom: 2px;
+      margin-bottom: 6px;
+    }
+    .summary-text {
+      font-size: 9.5pt;
+      text-align: justify;
+      color: #334155;
+    }
+    .skills-grid {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      row-gap: 4px;
+      font-size: 9.5pt;
+    }
+    .skills-category {
+      font-weight: 600;
+      color: #1e293b;
+    }
+    .skills-items {
+      color: #334155;
+    }
+    .entry {
+      margin-bottom: 8px;
+    }
+    .entry-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 10pt;
+    }
+    .entry-title {
+      font-weight: 700;
+      color: #0f172a;
+    }
+    .entry-company {
+      font-weight: 600;
+      color: #2563eb;
+    }
+    .entry-location {
+      font-style: italic;
+      color: #64748b;
+      font-size: 9pt;
+    }
+    .entry-date {
+      font-size: 9pt;
+      color: #64748b;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    ul.bullets {
+      list-style-type: disc;
+      margin-left: 18px;
+      margin-top: 3px;
+    }
+    ul.bullets li {
+      font-size: 9.5pt;
+      color: #334155;
+      margin-bottom: 2px;
+      text-align: justify;
+    }
+    .highlight {
+      font-weight: 600;
+      color: #0f172a;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>{{ name }}</h1>
+    <div class="contact-info">
+      {% if email %}<span><a href="mailto:{{ email }}">{{ email }}</a></span>{% endif %}
+      {% if phone %}<span>{{ phone }}</span>{% endif %}
+      {% if location %}<span>{{ location }}</span>{% endif %}
+      {% if linkedin %}<span><a href="{{ linkedin }}">LinkedIn</a></span>{% endif %}
+      {% if github %}<span><a href="{{ github }}">GitHub</a></span>{% endif %}
+      {% if portfolio %}<span><a href="{{ portfolio }}">Portfolio</a></span>{% endif %}
+    </div>
+  </header>
+
+  {% if summary %}
+  <section id="summary">
+    <h2>Professional Summary</h2>
+    <p class="summary-text">{{ summary }}</p>
+  </section>
+  {% endif %}
+
+  {% if skills %}
+  <section id="skills">
+    <h2>Technical & Professional Skills</h2>
+    <div class="skills-grid">
+      {% for category, items in skills.items() %}
+      <div class="skills-category">{{ category }}:</div>
+      <div class="skills-items">{{ items | join(', ') }}</div>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  {% if experience %}
+  <section id="experience">
+    <h2>Work Experience</h2>
+    {% for job in experience %}
+    <div class="entry">
+      <div class="entry-header">
+        <div>
+          <span class="entry-title">{{ job.title }}</span> — 
+          <span class="entry-company">{{ job.company }}</span>
+          {% if job.location %}<span class="entry-location">({{ job.location }})</span>{% endif %}
+        </div>
+        <div class="entry-date">{{ job.start_date }} – {{ job.end_date }}</div>
+      </div>
+      {% if job.bullets %}
+      <ul class="bullets">
+        {% for bullet in job.bullets %}
+        <li>{{ bullet }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </section>
+  {% endif %}
+
+  {% if projects %}
+  <section id="projects">
+    <h2>Key Projects</h2>
+    {% for project in projects %}
+    <div class="entry">
+      <div class="entry-header">
+        <div>
+          <span class="entry-title">{{ project.name }}</span>
+          {% if project.role %} — <span class="entry-company">{{ project.role }}</span>{% endif %}
+          {% if project.link %} | <a href="{{ project.link }}" style="font-size: 8.5pt; color: #0284c7;">View Project</a>{% endif %}
+        </div>
+        {% if project.date %}<div class="entry-date">{{ project.date }}</div>{% endif %}
+      </div>
+      {% if project.technologies %}
+      <div style="font-size: 8.5pt; color: #64748b; margin-top: 1px;"><strong>Tech:</strong> {{ project.technologies | join(', ') }}</div>
+      {% endif %}
+      {% if project.bullets %}
+      <ul class="bullets">
+        {% for bullet in project.bullets %}
+        <li>{{ bullet }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </section>
+  {% endif %}
+
+  {% if education %}
+  <section id="education">
+    <h2>Education</h2>
+    {% for edu in education %}
+    <div class="entry">
+      <div class="entry-header">
+        <div>
+          <span class="entry-title">{{ edu.degree }}</span> — 
+          <span class="entry-company">{{ edu.institution }}</span>
+          {% if edu.location %}<span class="entry-location">({{ edu.location }})</span>{% endif %}
+        </div>
+        <div class="entry-date">{{ edu.graduation_date }}</div>
+      </div>
+      {% if edu.details %}
+      <div style="font-size: 9pt; color: #475569;">{{ edu.details }}</div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </section>
+  {% endif %}
+
+  {% if certifications %}
+  <section id="certifications">
+    <h2>Certifications</h2>
+    <ul class="bullets" style="margin-top: 2px;">
+      {% for cert in certifications %}
+      <li><strong>{{ cert.name }}</strong> — {{ cert.issuer }}{% if cert.date %} ({{ cert.date }}){% endif %}</li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endif %}
+
+</body>
+</html>
